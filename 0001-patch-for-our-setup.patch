@@ -1,0 +1,41 @@
+From b2264f2ad0db2215fa7d42fed15cc73307874109 Mon Sep 17 00:00:00 2001
+From: plagache <plagache@protonmail.com>
+Date: Wed, 3 Jun 2026 15:26:53 +0200
+Subject: [PATCH] patch for our setup;
+
+---
+ tinygrad/runtime/ops_amd.py | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/tinygrad/runtime/ops_amd.py b/tinygrad/runtime/ops_amd.py
+index ab997443e..ab236935f 100644
+--- a/tinygrad/runtime/ops_amd.py
++++ b/tinygrad/runtime/ops_amd.py
+@@ -657,15 +657,15 @@ class AMDAllocator(HCQAllocator['AMDDevice']):
+     if not self.dev.iface.pci_dev.usb.usb.is_custom: return super()._copyout(dest, src)
+     self.dev.synchronize()
+ 
+-    with hcq_profile(self.dev, queue_type=self.dev.hw_copy_queue_t, desc=TracingKey(f"{self.dev.device} -> TINY", ret=dest.nbytes), enabled=PROFILE,
+-                     dev_suff="SDMA:0"):
+-      for i in range(0, dest.nbytes, cp_size:=self.b[0].size):
+-        self.dev.iface.pci_dev.usb.scsi_read_arm(lsize:=min(cp_size, dest.nbytes - i))
+-        self.dev.hw_copy_queue_t().wait(self.dev.timeline_signal, self.dev.timeline_value - 1) \
+-                                  .copy(self.b[0], src.offset(i), lsize) \
+-                                  .write(self.dev.iface.cq_buf.offset(12), 0) \
+-                                  .signal(self.dev.timeline_signal, self.dev.next_timeline()).submit(self.dev)
+-        dest.cast('B')[i:i+lsize] = self.b[0].cpu_view().view(size=lsize, fmt='B')[:]
++    usb = self.dev.iface.pci_dev.usb
++    bar_base = self.dev.iface.pci_dev.bar_info(self.dev.iface.vram_bar)[0]
++    src_pcie_base = bar_base + src.base.meta.mapping.paddrs[0][0]
++
++    cp_size = (self.max_copyout_size or 0x1000)
++    for i in range(0, dest.nbytes, cp_size):
++      lsize = min(cp_size, dest.nbytes - i)
++      data = usb.pcie_mem_read(src_pcie_base + i, round_up(lsize, 4))
++      dest.cast('B')[i:i+lsize] = data[:lsize]
+ 
+ @dataclass
+ class AMDQueueDesc:
+-- 
+2.54.0
+
