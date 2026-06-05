@@ -37,7 +37,7 @@ Yolov:
 ```sh
 PYTHONPATH="." DEBUG=2 DEV=USB+AMD uv run python3 examples/yolov8.py "~/.tools/wallpapers/Japanese_garden.jpg" m
 ```
-Yolov8 has different variants, you can choose from ['n', 's', 'm', 'l', 'x']
+Yolov8 has different variants, you can choose from [`n`, `s`, `m`, `l`, `x`]
 
 Qwen:
 ```sh
