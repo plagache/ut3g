@@ -30,9 +30,14 @@ AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8
 - [x] flash [firmware](https://github.com/tinygrad/asm2464pd-firmware)
 - [x] mnist examples to appreciates the speed and Viz UI
 - [x] yolov example
-- [ ] Qwen3.gguf
+- [x] Qwen3.5_0.4b.gguf running at 200tok/s
+- [x] Qwen3.5_4b.gguf running at 5tok/s
+- [ ] yolov on video, look at roryclear Examples
+    - [ ] the idea is to cut the video in multiple frame, and feed the frame one by one
+    - [ ] then recreating the video with the list of frame processed by yolov
+    - in his implementation roryclear is creating Camera stream object that express its setup
 - [ ] finetune yolov with rugby dataset
-- [ ] yolov on video, look at roryclear examples
+    - think of other architecture that could learn from the rugby model
 
 
 ## TinyRack
