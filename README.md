@@ -1,6 +1,10 @@
 ## Setup
 Start by setting up [Tinygrad](https://github.com/tinygrad/tinygrad)
 
+```sh
+DEV=AMD:HIP AM_DEBUG=2 uv run python3 -m tinygrad.device
+```
+
 ## Examples
 
 Simple mnist:
@@ -28,6 +32,8 @@ AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8
 - [x] Mount 7900xtx on ut3g
 - [x] plug everything in the PSU
 - [x] flash [firmware](https://github.com/tinygrad/asm2464pd-firmware)
+    - we actually didn't need to flash a specifique firmware
+    - it was working with amb_usb4
 - [x] mnist examples to appreciates the speed and Viz UI
 - [x] yolov example
 - [x] Qwen3.5_0.4b.gguf running at 200tok/s
