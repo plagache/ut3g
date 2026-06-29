@@ -24,7 +24,7 @@ DEBUG=2 AM_RESET=1 GMMU=0 JITBEAM=4 DEV=AMD:HIP uv run python3 -m tinygrad.llm -
 ```
 
 ```sh
-AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --warmup --serve
+AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:27b" --serve
 ```
 
 
