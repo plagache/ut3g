@@ -20,11 +20,11 @@ Yolov8 has different variants, you can choose from ['n', 's', 'm', 'l', 'x']
 
 Qwen:
 ```sh
-DEBUG=2 AM_RESET=1 GMMU=0 JITBEAM=4 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
+JITBEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:27b" --serve
 ```
 
 ```sh
-AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:27b" --serve
+DEBUG=2 AM_RESET=1 JITBEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
 ```
 
 
@@ -33,11 +33,14 @@ AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:27b
 - [x] plug everything in the PSU
 - [x] flash [firmware](https://github.com/tinygrad/asm2464pd-firmware)
     - we actually didn't need to flash a specifique firmware
-    - it was working with amb_usb4
+    - [x] re-flashed the base USB4 firmware
 - [x] mnist examples to appreciates the speed and Viz UI
 - [x] yolov example
-- [x] Qwen3.5_0.4b.gguf running at 200tok/s
-- [x] Qwen3.5_4b.gguf running at 5tok/s
+- [x] Qwen3.5_0.4b.gguf from 200tok/s to 250tok/s
+- [x] Qwen3.5_4b.gguf from 5tok/s to 105tok/s
+- [x] Qwen3.27b.gguf running at 20tok/s with JITBEAM=2
+- [ ] plug Local Qwen in opencode
+- [ ] Simple push T world model rewrite in tinygrad
 - [ ] yolov on video, look at roryclear Examples
     - [ ] the idea is to cut the video in multiple frame, and feed the frame one by one
     - [ ] then recreating the video with the list of frame processed by yolov
