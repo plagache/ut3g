@@ -1,11 +1,24 @@
-## Setup
+# UT3G
+just a repo where i store information about the [UT3G](https://www.adt.link/product/UT3G.html)
+
+## Install
 Start by setting up [Tinygrad](https://github.com/tinygrad/tinygrad)
 
+Then we want to install [TinyGPU](https://docs.tinygrad.org/tinygpu/)
+
+With the 7900xtx we use [ENV](https://docs.tinygrad.org/developer/am/#environment-variables)
+
+Testing with:
 ```sh
-DEV=AMD:HIP AM_DEBUG=2 uv run python3 -m tinygrad.device
+DEV=AMD:HIP uv run python3 -m tinygrad.device
 ```
 
 ## Examples
+
+##
+```sh
+JITBEAM=2 DEV=AMD:HIP uv run examples/yolov8_video.py video.m4
+```
 
 Simple mnist:
 ```sh
@@ -27,6 +40,11 @@ JITBEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "q
 DEBUG=2 AM_RESET=1 JITBEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
 ```
 
+```sh
+HF_HUB_ENABLE_HF_TRANSFER=1 JITBEAM=2 DEBUG=2 AM_RESET=1 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "glm-q4ks" --serve
+```
+Sometimes the Downloads is very slow
+if you have `uv pip install huggingface_hub` and `uv pip install hf_transfer`
 
 ## Todo
 - [x] Mount 7900xtx on ut3g
@@ -41,9 +59,10 @@ DEBUG=2 AM_RESET=1 JITBEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -
 - [x] Qwen3.27b.gguf running at 20tok/s with JITBEAM=2
 - [ ] plug Local Qwen in opencode
 - [ ] Simple push T world model rewrite in tinygrad
-- [ ] yolov on video, look at roryclear Examples
-    - [ ] the idea is to cut the video in multiple frame, and feed the frame one by one
-    - [ ] then recreating the video with the list of frame processed by yolov
+- [x] yolov on video, look at roryclear Examples
+    - [x] the idea is to cut the video in multiple frame, and feed the frame one by one
+    - [x] then recreating the video with the list of frame processed by yolov
+    - [ ] we need to pack frames, and pass a largeur batch to yolov8
     - in his implementation roryclear is creating Camera stream object that express its setup
 - [ ] finetune yolov with rugby dataset
     - think of other architecture that could learn from the rugby model
