@@ -18,6 +18,7 @@ DEV=AMD:HIP uv run python3 -m tinygrad.device
 ##
 ```sh
 JITBEAM=2 DEV=AMD:HIP uv run examples/yolov8_video.py video.m4
+DEV=AMD:HIP uv run examples/yolov8_video.py 
 ```
 
 Simple mnist:
@@ -62,7 +63,7 @@ if you have `uv pip install huggingface_hub` and `uv pip install hf_transfer`
 - [x] yolov on video, look at roryclear Examples
     - [x] the idea is to cut the video in multiple frame, and feed the frame one by one
     - [x] then recreating the video with the list of frame processed by yolov
-    - [ ] we need to pack frames, and pass a largeur batch to yolov8
+    - [x] Packed frame with batch_size, `git apply` staged.patch in tinygrad
     - in his implementation roryclear is creating Camera stream object that express its setup
 - [ ] finetune yolov with rugby dataset
     - think of other architecture that could learn from the rugby model

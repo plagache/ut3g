@@ -1,0 +1,188 @@
+diff --git a/examples/yolov8.py b/examples/yolov8.py
+index b0e98218c..0a1364ede 100644
+--- a/examples/yolov8.py
++++ b/examples/yolov8.py
+@@ -328,24 +328,27 @@ def compute_iou_matrix(boxes):
+   return intersection / union
+ 
+ def postprocess(output, max_det=300, conf_threshold=0.25, iou_threshold=0.45):
+-  xc, yc, w, h, class_scores = output[0][0], output[0][1], output[0][2], output[0][3], output[0][4:]
+-  class_ids = Tensor.argmax(class_scores, axis=0)
+-  probs = Tensor.max(class_scores, axis=0)
+-  probs = Tensor.where(probs >= conf_threshold, probs, 0)
+-  x1 = xc - w / 2
+-  y1 = yc - h / 2
+-  x2 = xc + w / 2
+-  y2 = yc + h / 2
+-  boxes = Tensor.stack(x1, y1, x2, y2, probs, class_ids, dim=1)
+-  order = Tensor.topk(probs, max_det)[1]
+-  boxes = boxes[order]
+-  iou = compute_iou_matrix(boxes[:, :4])
+-  iou = Tensor.triu(iou, diagonal=1)
+-  same_class_mask = boxes[:, -1][:, None] == boxes[:, -1][None, :]
+-  high_iou_mask = (iou > iou_threshold) & same_class_mask
+-  no_overlap_mask = high_iou_mask.sum(axis=0) == 0
+-  boxes = boxes * no_overlap_mask.unsqueeze(-1)
+-  return boxes
++  all_boxes = []
++  for i in range(output.shape[0]):
++    xc, yc, w, h, class_scores = output[i][0], output[i][1], output[i][2], output[i][3], output[i][4:]
++    class_ids = Tensor.argmax(class_scores, axis=0)
++    probs = Tensor.max(class_scores, axis=0)
++    probs = Tensor.where(probs >= conf_threshold, probs, 0)
++    x1 = xc - w / 2
++    y1 = yc - h / 2
++    x2 = xc + w / 2
++    y2 = yc + h / 2
++    boxes = Tensor.stack(x1, y1, x2, y2, probs, class_ids, dim=1)
++    order = Tensor.topk(probs, max_det)[1]
++    boxes = boxes[order]
++    iou = compute_iou_matrix(boxes[:, :4])
++    iou = Tensor.triu(iou, diagonal=1)
++    same_class_mask = boxes[:, -1][:, None] == boxes[:, -1][None, :]
++    high_iou_mask = (iou > iou_threshold) & same_class_mask
++    no_overlap_mask = high_iou_mask.sum(axis=0) == 0
++    boxes = boxes * no_overlap_mask.unsqueeze(-1)
++    all_boxes.append(boxes)
++  return Tensor.stack(*all_boxes, dim=0)
+ 
+ def get_weights_location(yolo_variant: str) -> Path:
+   weights_location = Path(__file__).parents[1] / "weights" / f'yolov8{yolo_variant}.safetensors'
+@@ -382,7 +385,7 @@ if __name__ == '__main__':
+   load_state_dict(yolo_infer, state_dict)
+ 
+   st = time.time()
+-  predictions = yolo_infer(pre_processed_image).numpy()
++  predictions = yolo_infer(pre_processed_image).numpy()[0]
+ 
+   print(f'did inference in {int(round(((time.time() - st) * 1000)))}ms')
+   #v8 and v3 have same 80 class names for Object Detection
+diff --git a/examples/yolov8_video.py b/examples/yolov8_video.py
+new file mode 100644
+index 000000000..1f7f800d1
+--- /dev/null
++++ b/examples/yolov8_video.py
+@@ -0,0 +1,123 @@
++import sys
++import ffmpeg
++import cv2
++from pathlib import Path
++
++# This imports everything from your other file
++# Make sure yolov8.py is in the same folder!
++from yolov8 import (
++    YOLOv8, 
++    preprocess, 
++    get_variant_multiples, 
++    safe_load, 
++    get_weights_location, 
++    load_state_dict, 
++    scale_boxes, 
++    draw_bounding_boxes_and_save, 
++    fetch
++)
++
++def process_video_yolo(video_path: str, yolo_variant: str, batch_size: int = 64):
++    # 1. Setup Paths using pathlib
++    input_file = Path(video_path)
++    output_file = Path(f"processed_{input_file.name}")
++    frames_dir = Path("frames_temp")
++    frames_dir.mkdir(exist_ok=True)
++
++    # 2. Initialize YOLOv8 Model (Load ONCE)
++    print(f'Initializing YOLOv8 version {yolo_variant}...')
++    depth, width, ratio = get_variant_multiples(yolo_variant)
++    yolo_infer = YOLOv8(w=width, r=ratio, d=depth, num_classes=80)
++    
++    # Load weights
++    state_dict = safe_load(get_weights_location(yolo_variant))
++    load_state_dict(yolo_infer, state_dict)
++    
++    # Fetch labels
++    class_labels = fetch('https://raw.githubusercontent.com/pjreddie/darknet/master/data/coco.names').read_text().split("\n")
++
++    # 3. Extract Frames using ffmpeg-python
++    print("Extracting frames...")
++    (
++        ffmpeg
++        .input(str(input_file))
++        .output(str(frames_dir / "frame_%04d.jpg"), qscale=2)
++        .run(overwrite_output=True)
++    )
++
++    # 4. Get original FPS for reconstruction
++    probe = ffmpeg.probe(str(input_file))
++    video_stream = next(stream for stream in probe['streams'] if stream['codec_type'] == 'video')
++    fps = eval(video_stream['r_frame_rate'])
++
++    # 5. Process Frames
++    frame_files = sorted(frames_dir.glob("*.jpg"))
++    print(f"Processing {len(frame_files)} frames through TinyGrad YOLOv8...")
++
++    i = 0
++    current_batch_size = batch_size
++    while i < len(frame_files):
++        remaining = len(frame_files) - i
++        while current_batch_size > remaining:
++            current_batch_size //= 2
++
++        batch_paths = frame_files[i:i+current_batch_size]
++        imgs, orig_shapes = [], []
++        for fp in batch_paths:
++            img = cv2.imread(str(fp))
++            if img is not None:
++                imgs.append(img)
++                orig_shapes.append(img.shape)
++
++        effective_batch = len(imgs)
++        if effective_batch == 0:
++            i += current_batch_size
++            current_batch_size = batch_size
++            continue
++
++        preprocessed = preprocess(imgs)
++        predictions = yolo_infer(preprocessed).numpy()
++
++        for j in range(effective_batch):
++            frame_preds = scale_boxes(preprocessed.shape[2:], predictions[j], orig_shapes[j])
++            draw_bounding_boxes_and_save(
++                orig_img_path=str(batch_paths[j]),
++                output_img_path=str(batch_paths[j]),
++                predictions=frame_preds,
++                class_labels=class_labels
++            )
++
++        i += current_batch_size
++        current_batch_size = batch_size
++
++    # 6. Reconstruct Video
++    print("Reconstructing video...")
++    (
++        ffmpeg
++        .input(str(frames_dir / "frame_%04d.jpg"), framerate=fps)
++        .output(
++            str(output_file), 
++            vcodec='libx264', 
++            pix_fmt='yuv420p' # Important for compatibility
++        )
++        .run(overwrite_output=True)
++    )
++
++    # 7. Cleanup
++    print("Cleaning up temporary files...")
++    for frame in frames_dir.glob("*.jpg"):
++        frame.unlink()
++    frames_dir.rmdir()
++    print(f"Success! Processed video saved as {output_file}")
++
++if __name__ == '__main__':
++    # usage : python3 yolov8_video.py "video_path" "v8 variant"
++    if len(sys.argv) < 2:
++        print("Error: Video path not provided.")
++        print("Usage: python3 script.py <video_path> <variant(n,s,m,l,x)>")
++        sys.exit(1)
++
++    video_path = sys.argv[1]
++    yolo_variant = sys.argv[2] if len(sys.argv) >= 3 else 'n'
++    
++    process_video_yolo(video_path, yolo_variant)
