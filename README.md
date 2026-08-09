@@ -13,11 +13,11 @@ Testing with:
 DEV=AMD:HIP uv run python3 -m tinygrad.device
 ```
 
-## Examples
+## Optimisation
 
-##
+Speed, batch_size, finetuning, add features (add video on yolov)
 ```sh
-JITBEAM=2 DEV=AMD:HIP uv run examples/yolov8_video.py video.m4
+BEAM=2 DEV=AMD:HIP uv run examples/yolov8_video.py video.m4
 DEV=AMD:HIP uv run examples/yolov8_video.py 
 ```
 
@@ -32,20 +32,40 @@ PYTHONPATH="." DEBUG=2 DEV=AMD:HIP uv run python3 examples/yolov8.py "~/.tools/w
 ```
 Yolov8 has different variants, you can choose from ['n', 's', 'm', 'l', 'x']
 
-Qwen:
+## fast-llama-gpt2
+
+you need the huggingface_cli: `curl -LsSf https://hf.co/cli/install.sh | bash`
+then we can download with link from huggingface: `hf download hf://unsloth/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf`
+and then we can use `~/.cache/huggingface/hub/model-name/snapshots/git-hash/model-Quantized`
+
 ```sh
-JITBEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:27b" --serve
+JITBEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.6-35B-A3B-GGUF/snapshots/a483e9e6cbd595906af30beda3187c2663a1118c/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf" --serve
+```
+Also need to understand how to manage max_context lenght? set higher number go big ? are smaller context to give?
+
+This quantization `Qwen3.6-35B-A3B-UD-IQ4_XS.gguf` is available on this branch:`qwen36_27b_amd_minimal`
+```sh
+CACHELEVEL=0 BEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.6-35B-A3B-GGUF/snapshots/a483e9e6cbd595906af30beda3187c2663a1118c/Qwen3.6-35B-A3B-UD-IQ4_XS.gguf" --serve
 ```
 
 ```sh
-DEBUG=2 AM_RESET=1 JITBEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
+BEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.6:35b-a3b" --serve
 ```
 
 ```sh
-HF_HUB_ENABLE_HF_TRANSFER=1 JITBEAM=2 DEBUG=2 AM_RESET=1 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "glm-q4ks" --serve
+DEBUG=2 AM_RESET=1 BEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
 ```
-Sometimes the Downloads is very slow
-if you have `uv pip install huggingface_hub` and `uv pip install hf_transfer`
+
+Difference JITBEAM and BEAM ?
+What is GMMU? seems to be GPU Memory Management Unit?
+in Tinygrad it will bypass the GMMU of the provider
+
+
+## Development
+test World Model
+test simulation
+Quel World?, pour farming?
+Quel Model?
 
 ## Todo
 - [x] Mount 7900xtx on ut3g
