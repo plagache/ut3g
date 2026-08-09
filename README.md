@@ -78,7 +78,7 @@ Quel Model?
 - [x] Qwen3.5_0.4b.gguf from 200tok/s to 250tok/s
 - [x] Qwen3.5_4b.gguf from 5tok/s to 105tok/s
 - [x] Qwen3.27b.gguf running at 20tok/s with JITBEAM=2
-- [ ] plug Local Qwen in opencode
+- [x] plug Local Qwen in pi
 - [ ] Simple push T world model rewrite in tinygrad
 - [x] yolov on video, look at roryclear Examples
     - [x] the idea is to cut the video in multiple frame, and feed the frame one by one
