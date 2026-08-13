@@ -103,6 +103,7 @@ We bought the Mac Mini M4 base
 
 need to make a setup that we can moove and transport
 
+`mining rig gpu case` was the search i made to find rack for 6-8 GPU's
 wire rack
 
 Current
