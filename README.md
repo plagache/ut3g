@@ -38,15 +38,24 @@ you need the huggingface_cli: `curl -LsSf https://hf.co/cli/install.sh | bash`
 then we can download with link from huggingface: `hf download hf://unsloth/Qwen3.6-35B-A3B-GGUF/Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf`
 and then we can use `~/.cache/huggingface/hub/model-name/snapshots/git-hash/model-Quantized`
 
+! Test --benchmark, --warmup, BEAM vs JITBEAM [0,1,2,3,4]
+! Also need to understand how to manage max_context lenght? set higher number go big ? are smaller context to give?
+! how to have 0 Context addition query during thinking? look into [pi]
 ```sh
-JITBEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.6-35B-A3B-GGUF/snapshots/a483e9e6cbd595906af30beda3187c2663a1118c/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf" --serve
+JITBEAM=2 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.6-35B-A3B-GGUF/snapshots/a483e9e6cbd595906af30beda3187c2663a1118c/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf"
 ```
-Also need to understand how to manage max_context lenght? set higher number go big ? are smaller context to give?
 
-This quantization `Qwen3.6-35B-A3B-UD-IQ4_XS.gguf` is available on this branch:`qwen36_27b_amd_minimal`
+New model drop out
+With `DEBUG=2` at first to see the different Optimisation
+then we remove it and add the `--max_context=262144` `131072` or `65536` respectively multiple of `1024` * `256` `128` or `64`
+This quantization `Qwen3.8-27B-IQ4_XS.gguf`
 ```sh
-CACHELEVEL=0 BEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.6-35B-A3B-GGUF/snapshots/a483e9e6cbd595906af30beda3187c2663a1118c/Qwen3.6-35B-A3B-UD-IQ4_XS.gguf" --serve
+JITBEAM=2 DEBUG=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/b62a80264f8b0c1bb849ee1c9c487415ebeca194/Qwen3.8-27B-IQ4_XS.gguf" --serve --max_context=65536
+JITBEAM=2 DEBUG=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-IQ4_XS.gguf" --serve --max_context=65536
+JITBEAM=2 DEBUG=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3-0.6B-GGUF/snapshots/50968a4468ef4233ed78cd7c3de230dd1d61a56b/Qwen3-0.6B-IQ4_XS.gguf" --serve --max_context=65536
 ```
+
+
 
 ```sh
 BEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.6:35b-a3b" --serve
