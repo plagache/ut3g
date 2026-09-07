@@ -47,7 +47,7 @@ and then we can use `~/.cache/huggingface/hub/model-name/snapshots/git-hash/mode
 ! Also need to understand how to manage max_context lenght? set higher number go big ? are smaller context to give?
 ! how to have 0 Context addition query during thinking? look into [pi]
 ```sh
-JITBEAM=2 DEBUG=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.6-35B-A3B-GGUF/snapshots/a483e9e6cbd595906af30beda3187c2663a1118c/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf" --serve --max_context=65536
+JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.6-35B-A3B-GGUF/snapshots/a483e9e6cbd595906af30beda3187c2663a1118c/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf" --serve --max_context=65536
 ```
 
 New model drop out
@@ -55,22 +55,25 @@ With `DEBUG=2` at first to see the different Optimisation
 then we remove it and add the `--max_context=262144` `131072` or `65536` respectively multiple of `1024` * `256` `128` or `64`
 This quantization `Qwen3.8-27B-IQ4_XS.gguf`
 ```sh
-JITBEAM=2 DEBUG=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/b62a80264f8b0c1bb849ee1c9c487415ebeca194/Qwen3.8-27B-IQ4_XS.gguf" --serve --max_context=65536
+JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/b62a80264f8b0c1bb849ee1c9c487415ebeca194/Qwen3.8-27B-IQ4_XS.gguf" --serve --max_context=65536
+JITBEAM=2 DEBUG=2 DEV=PCI+AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-Q4_K_M.gguf" --serve --max_context=131072
 ```
 
-Then you have very small models that we would want to Agent.
+Then you have very small models that we would want to test with different function call.
 ```sh
-JITBEAM=2 DEBUG=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3-0.6B-GGUF/snapshots/50968a4468ef4233ed78cd7c3de230dd1d61a56b/Qwen3-0.6B-IQ4_XS.gguf" --serve --max_context=262144
+JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3-0.6B-GGUF/snapshots/50968a4468ef4233ed78cd7c3de230dd1d61a56b/Qwen3-0.6B-IQ4_XS.gguf" --serve --max_context=262144
 ```
 
-
-```sh
-BEAM=2 AM_RESET=1 AM_DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.6:35b-a3b" --serve
-```
 
 ```sh
-DEBUG=2 AM_RESET=1 BEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
+BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.6:35b-a3b" --serve
 ```
+
+```sh
+DEBUG=2 BEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
+```
+
+Removing AM_RESET and AM_DEBUG since its linux only
 
 Difference JITBEAM and BEAM ?
 What is GMMU? seems to be GPU Memory Management Unit?
