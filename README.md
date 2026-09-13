@@ -8,6 +8,8 @@ Then we want to install [TinyGPU](https://docs.tinygrad.org/tinygpu/)
 
 With the 7900xtx we use [ENV](https://docs.tinygrad.org/developer/am/#environment-variables)
 
+Need to `git checkout -b macos-amd-pin 33cd373ad` for `APLRemotePCIDevice` to still be in system and not extra where tinygpu.sh will not find APLRemotePCIDevice module.
+
 Testing with:
 ```sh
 DEV=AMD:HIP uv run python3 -m tinygrad.device
@@ -56,7 +58,7 @@ then we remove it and add the `--max_context=262144` `131072` or `65536` respect
 This quantization `Qwen3.8-27B-IQ4_XS.gguf`
 ```sh
 JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/b62a80264f8b0c1bb849ee1c9c487415ebeca194/Qwen3.8-27B-IQ4_XS.gguf" --serve --max_context=65536
-JITBEAM=2 DEBUG=2 DEV=PCI+AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-Q4_K_M.gguf" --serve --max_context=131072
+JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-Q4_K_M.gguf" --serve --max_context=65536
 ```
 
 Then you have very small models that we would want to test with different function call.
