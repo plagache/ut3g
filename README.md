@@ -8,7 +8,8 @@ Then we want to install [TinyGPU](https://docs.tinygrad.org/tinygpu/)
 
 With the 7900xtx we use [ENV](https://docs.tinygrad.org/developer/am/#environment-variables)
 
-Need to `git checkout -b macos-amd-pin 33cd373ad` for `APLRemotePCIDevice` to still be in system and not extra where tinygpu.sh will not find APLRemotePCIDevice module.
+Need to `git checkout 33cd373ad` for `APLRemotePCIDevice` to still be in system and not extra where tinygpu.sh will not find APLRemotePCIDevice module.
+or `git checkout -b macos-amd-pin 33cd373ad` to create a new branch from this commit
 
 Testing with:
 ```sh
