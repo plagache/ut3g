@@ -11,6 +11,18 @@ With the 7900xtx we use [ENV](https://docs.tinygrad.org/developer/am/#environmen
 Need to `git checkout 33cd373ad` for `APLRemotePCIDevice` to still be in system and not extra where tinygpu.sh will not find APLRemotePCIDevice module.
 or `git checkout -b macos-amd-pin 33cd373ad` to create a new branch from this commit
 
+we need to make a plan to port all that;
+first we need to identify every part of the code that is being used by the setup
+Then compare with the current state of tinygrad
+each time we understand a new part, we will be closer to the truth
+
+What used to work:
+PCIIface → PCIIfaceBase.__init__ → System.pci_probe_device → APLRemotePCIDevice, which (per extra/setup_tinygpu_osx.sh) talks to the "TinyGPU" DriverKit extension/app
+What it is now:
+USBIface → USBPCIDevice → raw USB3 PCIe config-space requests via CustomASM24Controller, no DriverKit extension involved
+
+what to test for: TinyGPU link/socket is active reachable
+
 Testing with:
 ```sh
 DEV=AMD:HIP uv run python3 -m tinygrad.device
@@ -51,6 +63,7 @@ and then we can use `~/.cache/huggingface/hub/model-name/snapshots/git-hash/mode
 ! how to have 0 Context addition query during thinking? look into [pi]
 ```sh
 JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.6-35B-A3B-GGUF/snapshots/a483e9e6cbd595906af30beda3187c2663a1118c/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf" --serve --max_context=65536
+JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--ukisai--Swift-1.5-Qwen3.8-27B-GGUF/snapshots/a1614465cfa35d04d3e8575d713fa779662b5eab/Swift-1.5-Qwen3.8-27B-Q4_K_M.gguf" --serve --max_context=65536
 ```
 
 New model drop out
@@ -74,6 +87,7 @@ BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.6:35b-a3b" --serve
 
 ```sh
 DEBUG=2 BEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
+DEBUG=2 BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
 ```
 
 Removing AM_RESET and AM_DEBUG since its linux only
