@@ -1,5 +1,7 @@
 # UT3G
 just a repo where i store information about the [UT3G](https://www.adt.link/product/UT3G.html)
+in the future, the idea would be to have multiple GPU, with different eGPU board, that shard model.
+why not a 9070xtx with 32GB and a tinygrad chesnut
 
 ## Install
 Start by setting up [Tinygrad](https://github.com/tinygrad/tinygrad)
@@ -12,7 +14,14 @@ Need to `git checkout 33cd373ad` for `APLRemotePCIDevice` to still be in system 
 or `git checkout -b macos-amd-pin 33cd373ad` to create a new branch from this commit
 
 we need to make a plan to port all that;
-first we need to identify every part of the code that is being used by the setup
+Trace code use in the setup 7900xtx -> adt ut3g -> tb4/5 -> mac mini
+
+how are chunk of memory send on the card ?
+what is this story about 128 chunk of data ?
+
+the ideal part would be to write small part of code, that test every part of the hardware
+having information about the card would be great
+
 Then compare with the current state of tinygrad
 each time we understand a new part, we will be closer to the truth
 
@@ -22,6 +31,14 @@ What it is now:
 USBIface → USBPCIDevice → raw USB3 PCIe config-space requests via CustomASM24Controller, no DriverKit extension involved
 
 what to test for: TinyGPU link/socket is active reachable
+mac command to test driver is active and enabled
+we can kill the socket with `tinygrad/extra/usbgpu/tbgpu/kill_tinygpu.sh`, and reconnect
+
+tinygrad has multiple script we were supposed to use: 
+tinygrad/extra/usbgpu -> scan_pci.py
+i think `tbgpu`, meaning thunderbolt gpu
+tinygrad/extra/usbgpu/tbgpu -> kill/ install/ even install a tinygpu driver extension without the signing install_nosip: System Integrity Protection (SIP)
+
 
 Testing with:
 ```sh
@@ -90,7 +107,10 @@ DEBUG=2 BEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8
 DEBUG=2 BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
 ```
 
-Removing AM_RESET and AM_DEBUG since its linux only
+
+should go in tinygrad notes ->
+
+Removing AM_RESET and AM_DEBUG since its linux only/ i think
 
 Difference JITBEAM and BEAM ?
 What is GMMU? seems to be GPU Memory Management Unit?
@@ -104,6 +124,9 @@ Quel World?, pour farming?
 Quel Model?
 
 ## Todo
+
+- [ ] patch master allowing to have the last update from tinygrad : VIZ, SHARDING, etc
+
 - [x] Mount 7900xtx on ut3g
 - [x] plug everything in the PSU
 - [x] flash [firmware](https://github.com/tinygrad/asm2464pd-firmware)
@@ -115,15 +138,16 @@ Quel Model?
 - [x] Qwen3.5_4b.gguf from 5tok/s to 105tok/s
 - [x] Qwen3.27b.gguf running at 20tok/s with JITBEAM=2
 - [x] plug Local Qwen in pi
-- [ ] Simple push T world model rewrite in tinygrad
 - [x] yolov on video, look at roryclear Examples
     - [x] the idea is to cut the video in multiple frame, and feed the frame one by one
     - [x] then recreating the video with the list of frame processed by yolov
     - [x] Packed frame with batch_size, `git apply` staged.patch in tinygrad
     - in his implementation roryclear is creating Camera stream object that express its setup
+
+## implementation that could benefit from the GPU
+- [ ] Simple push T world model rewrite in tinygrad
 - [ ] finetune yolov with rugby dataset
     - think of other architecture that could learn from the rugby model
-
 
 ## TinyRack
 for the TinyGpu
