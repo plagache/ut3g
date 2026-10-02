@@ -43,6 +43,17 @@ tinygrad/extra/usbgpu/tbgpu -> kill/ install/ even install a tinygpu driver exte
 Testing with:
 ```sh
 DEV=AMD:HIP uv run python3 -m tinygrad.device
+uv run python -c "from tinygrad import Device; print(Device.DEFAULT)"
+```
+
+list mac driver extension
+```
+systemextensionsctl list
+```
+
+```
+system_profiler SPPCIDataType
+system_profiler SPThunderboltDataType
 ```
 
 ## Optimisation
@@ -97,24 +108,14 @@ Then you have very small models that we would want to test with different functi
 JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3-0.6B-GGUF/snapshots/50968a4468ef4233ed78cd7c3de230dd1d61a56b/Qwen3-0.6B-IQ4_XS.gguf" --serve --max_context=262144
 ```
 
-
 ```sh
 BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.6:35b-a3b" --serve
 ```
 
 ```sh
 DEBUG=2 BEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
-DEBUG=2 BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
+DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
 ```
-
-
-should go in tinygrad notes ->
-
-Removing AM_RESET and AM_DEBUG since its linux only/ i think
-
-Difference JITBEAM and BEAM ?
-What is GMMU? seems to be GPU Memory Management Unit?
-in Tinygrad it will bypass the GMMU of the provider
 
 
 ## Development
