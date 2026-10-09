@@ -47,11 +47,11 @@ uv run python -c "from tinygrad import Device; print(Device.DEFAULT)"
 ```
 
 list mac driver extension
-```
+```sh
 systemextensionsctl list
 ```
 
-```
+```sh
 system_profiler SPPCIDataType
 system_profiler SPThunderboltDataType
 ```
@@ -91,7 +91,7 @@ and then we can use `~/.cache/huggingface/hub/model-name/snapshots/git-hash/mode
 ! how to have 0 Context addition query during thinking? look into [pi]
 ```sh
 JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.6-35B-A3B-GGUF/snapshots/a483e9e6cbd595906af30beda3187c2663a1118c/Qwen3.6-35B-A3B-UD-Q4_K_M.gguf" --serve --max_context=65536
-JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--ukisai--Swift-1.5-Qwen3.8-27B-GGUF/snapshots/a1614465cfa35d04d3e8575d713fa779662b5eab/Swift-1.5-Qwen3.8-27B-Q4_K_M.gguf" --serve --max_context=65536
+JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--ConwayResearch--Underdog-Saluki-27B-1.0/snapshots/1336c0b5d74dfe6ad7f793577092f5effd9f97c6/Underdog-Saluki-27B-1.0-IQ2-mix.gguf" --serve --max_context=65536
 ```
 
 New model drop out
