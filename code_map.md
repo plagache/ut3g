@@ -1,7 +1,10 @@
 **1. How to see the devices tinygrad sees**
 
 ```bash
-python3 -m tinygrad.device          # tinygrad/device.py:418-444, runs a real Tensor per renderer
+# since renderer from AMD and METAL conflict in device.py:17
+# we put AMD before METAL in ALL_DEVICES = ["AMD", "METAL", "NV", "CUDA", "QCOM", "CL", "CPU", "DSP", "WEBGPU"]
+python3 -m tinygrad.device
+# tinygrad/device.py:418-444, runs a real Tensor per renderer
 python3 -c "from tinygrad import Device; print(Device.DEFAULT)"
 python3 -c "from tinygrad.device import Device; print(list(Device.get_available_devices()))"
 ```
