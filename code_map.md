@@ -103,8 +103,9 @@ Run the script section by section against the live card. Since the HIP renderer 
 ## Assistant
 
 ## Objective
-- Fix explicit renderer suffixes such as `Device["AMD:HIP"]` failing during interface selection, and add a focused regression test.
-- Do not create `extra/gpuprobe.py`; user will run the resulting tests.
+- this is not true, it cannot test if the device is not up and running: Fix explicit renderer suffixes such as `Device["AMD:HIP"]` failing during interface selection, and add a focused regression test.
+- Create a python script against every part of the setup ? 
+- Create `extra/gpuprobe.py`; user will run the resulting tests.
 
 ## Important Details
 - Current failure: `ValueError: invalid literal for int() with base 10: 'HIP'`.
