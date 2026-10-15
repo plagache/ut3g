@@ -1,5 +1,6 @@
 ## Todo
 
+- [ ] cleanup code_map, struct is good but it will not create a good test before clean
 - [ ] patch master allowing to have the last update from tinygrad : VIZ, SHARDING, etc
     - [ ] check code_map/code_trace in plan_hardware
     - [ ] create new file, and follow same code_map but in tinygrad(master), document absent or different
