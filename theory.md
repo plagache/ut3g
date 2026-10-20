@@ -25,6 +25,8 @@ the tinygpu to allocate size by bytes on the gpu VA (virtual address ?)
 ### tested
 - install extra & extra/hcq1, result in circular import and APLRemotePCIDevice is not cabled at all
 - asked to explain: `APLRemotePCIDevice`, `scan_pci`, `scan_device`, _select_iface, _select_device
+- monitoring was possible on linux with `extra/amdpci/am_smi.py` on mac a version of lspci is blocking us
+    - but there is a way to monitor exactly like amd_smi, see [[amd_smi.py]]
 
 ### How to solve ?
 - ask llm to make everything in extra/hcq1 work
