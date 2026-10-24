@@ -24,6 +24,7 @@ and make it work on (master) to use VIZ, SHARD, and other tools
 [[code_trace.md]] are logs
 [[theory.md]]
 [[deepwikitrace.md]]
+[[hardware_setup.png]]
 
 ### Commands
 
