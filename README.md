@@ -20,11 +20,11 @@ or `git checkout -b $NEW_BRANCH 33cd373ad` to create a new branch from this comm
 we want to understand each part that is involved in our setup
 and make it work on (master) to use VIZ, SHARD, and other tools
 
-[[code_map.md]] follow the software part
-[[code_trace.md]] are logs
-[[theory.md]]
-[[deepwikitrace.md]]
-[[hardware_setup.png]]
+[code_map.md] follow the software part
+[code_trace.md] are logs
+[theory.md]
+[deepwikitrace.md]
+![hardware_setup](hardware_setup.png)
 
 ### Commands
 
