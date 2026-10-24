@@ -4,6 +4,7 @@
 
 the hardware setup 7900xtx -> adt ut3g -> tb4/5 -> mac mini
 the soft setup associated to it tinygrad -> APLRemotePCIDevice -> tinygpu
+master has Any card -> chestnut -> usb2/4 -> mac mini
 
 ### Current state
 
@@ -11,6 +12,7 @@ comparing [[diff_agent_master.md]]
 so we detect interface and devices
 but there is a difference, old gpu had a list of its address, CPU exposed a cpu_view resulting in a DISK, the gpu would expose its paddr and size
 the tinygpu to allocate size by bytes on the gpu VA (virtual address ?)
+
 
 - `system.py:416-447` `APLRemotePCIDevice` stand for Apple RemotePCIDevice
     - this is the macOS-specific bit. It launches `/Applications/TinyGPU.app` (your "tinygpu") as a helper and talks to it over a Unix socket at `$TMPDIR/tinygpu.sock` with a 13-command RPC (`RemoteCmd` at `system.py:311-312`): `PROBE`, `MAP_BAR`, `CFG_READ/WRITE`, `MMIO_READ/WRITE`, `SYSMEM_READ/WRITE`, `MAP_SYSMEM_FD`.

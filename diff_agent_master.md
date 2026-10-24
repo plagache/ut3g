@@ -23,8 +23,9 @@ shorthand calls "GPU-owned sysmem": the dext created it and it's the only kind o
 most interestingly — its subclass RemoteMMIOInterface, where every __getitem__/__setitem__ is a socket RPC round-trip. Same API regardless of which side of the wire the bytes physically sit on.)
 
 ## Solution
-sysmem hop at Buffer.copy_from — fork-only, zero hcq2 churn
 
+sysmem hop at Buffer.copy_from — fork-only, zero hcq2 churn
+or
 Route through Buffer.copy_from (device.py:228) — every direction funnels there (run_linear, allocated src, eager).
 
 - host→card (CPU/DISK/NPY → AMD): take a card-sysmem scratch buffer (cached; one big 128 MiB Buffer + Buffer.view(n, off) slices, or a small size-keyed cache given MAX_SYSMEM cap), fill its client view:
