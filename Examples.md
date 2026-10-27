@@ -3,7 +3,7 @@
 Speed, batch_size, finetuning, add features (add video on yolov)
 ```sh
 BEAM=2 DEV=AMD:HIP uv run examples/yolov8_video.py video.m4
-DEV=AMD:HIP uv run examples/yolov8_video.py 
+DEV=AMD:HIP uv run examples/yolov8_video.py
 ```
 
 Simple mnist:
@@ -19,7 +19,7 @@ Yolov8 has different variants, you can choose from ['n', 's', 'm', 'l', 'x']
 
 ## fast-llama-gpt2
 
-In order to pass the template correctly to `pi`, you need jinja2:
+In order to pass the template correctly to `pi`, you need jinja2, so if you haven't install `testing` on tinygrad:
 ```sh
 uv pip install jinja2
 ```
@@ -55,6 +55,6 @@ BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.6:35b-a3b" --serve
 ```
 
 ```sh
-DEBUG=2 BEAM=2 GMMU=0 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
+DEBUG=2 BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
 ```

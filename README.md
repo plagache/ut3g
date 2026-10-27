@@ -20,6 +20,17 @@ or `git checkout -b $NEW_BRANCH 33cd373ad` to create a new branch from this comm
 we want to understand each part that is involved in our setup
 and make it work on (master) to use VIZ, SHARD, and other tools
 
+One load directly the weight in the card(tinyagent), master is representing it as a UOps.
+i do not understand how we can represent the parameters/weight on DISK correctly, has UOps.
+
+    │ Allocator's internal staging ring (self.b) + _copyin/     │ Staging as a graph node: stage = UOp.alloc(..., device=dev.host)
+    │ _copyout                                                  │ (hcq2.py:170)
+    ├───────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────
+    │ CPU memcpy through .cpu_view() window                     │ Enqueued SDMA copy reading the stage via GPUVM
+    ├───────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────
+    │ TCP-remote peer: CPU:host:port with .remote =             │ Same HostAllocator._alloc hook (device.py:302)
+    │ RemotePCIDevice                                           │
+
 [code_map.md] follow the software part
 [code_trace.md] are logs
 [theory.md]
@@ -27,6 +38,9 @@ and make it work on (master) to use VIZ, SHARD, and other tools
 ![hardware_setup](hardware_setup.png)
 
 ### Commands
+
+The actuall `DEV` for our setup is `DEV=PCI+AMD:HIP:gfx1100`
+`PCI` which is how we talk with the `AMD` device, `HIP` is the renderer(compiler), `gfx1100` which is the target architecture
 
 ```sh
 DEV=AMD:HIP uv run python3 -m tinygrad.device
