@@ -35,7 +35,7 @@ i do not understand how we can represent the parameters/weight on DISK correctly
 [code_trace.md] are logs
 [theory.md]
 [deepwikitrace.md]
-![hardware_setup](hardware_setup.png)
+![hardware_setup](hardware_setup_new.png)
 
 ### Commands
 
