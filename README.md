@@ -31,10 +31,7 @@ i do not understand how we can represent the parameters/weight on DISK correctly
     │ TCP-remote peer: CPU:host:port with .remote =             │ Same HostAllocator._alloc hook (device.py:302)
     │ RemotePCIDevice                                           │
 
-[code_map.md] follow the software part
-[code_trace.md] are logs
 [theory.md]
-[deepwikitrace.md]
 ![hardware_setup](hardware_setup_new.png)
 
 ### Commands
@@ -51,6 +48,7 @@ list mac driver extension
 ```sh
 systemextensionsctl list
 ```
+the TinyGPU should appear has enabled and activated
 
 ```sh
 system_profiler SPPCIDataType
