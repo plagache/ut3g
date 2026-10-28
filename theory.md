@@ -30,7 +30,7 @@ We are detecting devices and interfaces, so thats cool.
 - Run the tinygpu, connect to socket, retrieved PID, it will take the same PID for all devices in the run
 - install extra & extra/hcq1, result in circular import and APLRemotePCIDevice is not cabled at all
 
-we can kill the socket with `tinygrad/extra/usbgpu/tbgpu/kill_tinygpu.sh`, and reconnect
+we killed the socket with `tinygrad/extra/usbgpu/tbgpu/kill_tinygpu.sh`, and reconnect successfully
 tinygrad/extra/usbgpu/tbgpu -> kill/ install/ even install a tinygpu driver extension without the signing install_nosip: System Integrity Protection (SIP)
 
 ### Other Questions
