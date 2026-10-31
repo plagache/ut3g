@@ -1,11 +1,5 @@
 ```sh
 [1] DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
-device='AMD', dev_id=0, vendor=4098, devices=((65535, (29857, 29877, 29772, 29824, 30032, 30033, 30096, 30112, 30120)),)
-vendor=4098, devices=((65535, (29857, 29877, 29772, 29824, 30032, 30033, 30096, 30112, 30120)),)
-
-### this is from tinygrad(master)
-device='AMD', dev_id=0, vendor=4098, devices=((65535, (29772, 29824, 30032, 30033, 30096, 29857, 29877, 30112, 30120, 30128, 30131)),)
-vendor=4098, devices=((65535, (29772, 29824, 30032, 30033, 30096, 29857, 29877, 30112, 30120, 30128, 30131)),)
 
 am usb4: AM_SOC initialized
 am usb4: AM_GMC initialized
