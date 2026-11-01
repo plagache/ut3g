@@ -37,4 +37,5 @@ tinygrad/extra/usbgpu/tbgpu -> kill/ install/ even install a tinygpu driver exte
 how are chunk of memory send on the card ?
 what is this story about 128 chunk of data ?
 What is the GPU VA ?
+GPU Virtual Adress, its the adress expose by the gpu, where you could read bytes and information. you can read the API here
 What is the GPU VM ? GPU MMU ?
