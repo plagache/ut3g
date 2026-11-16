@@ -50,7 +50,10 @@ systemextensionsctl list
 ```
 the TinyGPU should appear has enabled and activated
 
+Theses are the Mac specifique commands to get info about the hardware
 ```sh
+system_profiler SPMemoryDataType
+system_profiler SPUSBDataType
 system_profiler SPPCIDataType
 system_profiler SPThunderboltDataType
 ```
