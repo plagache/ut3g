@@ -16,7 +16,7 @@ We are detecting devices and interfaces, so thats cool.
 
 - ops_amd.py the tinygrad runtime on top of `AMDev`(amdev.py) create a python object describing our GPU
     - it discovers the interface with `_select_iface` and defines renderer/device setup
-    - see [README.md] for how to use the env variable `DEV`
+    - see [README.md] for how to use the env variable `DEV` or the `docs/env_vars.md`
 
 ### to test
 
