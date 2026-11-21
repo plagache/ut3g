@@ -42,26 +42,21 @@ then we remove it and add the `--max_context=262144` `128000` or `65536` respect
 ```sh
 JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-Q4_K_M.gguf" --serve --max_context=80896
 ```
+this model has a hight tendency to loop, maybe there is some `PI` config i am doing wrong
 
-would like this model:
-```sh
-JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/b62a80264f8b0c1bb849ee1c9c487415ebeca194/Qwen3.8-27B-IQ4_XS.gguf" --serve --max_context=65536
-```
-but quantization IQ is not implemented in `33cd373ad`
+would like this model `Qwen3.8-27B-IQ4_XS` but quantization IQ is not implemented in `33cd373ad`
 
-Then you have very small models if we would want to test with different function call, quantization, etc
+Then you have very small models if we would want to `test` with different function call, quantization, etc
 ```sh
-JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3-0.6B-GGUF/snapshots/50968a4468ef4233ed78cd7c3de230dd1d61a56b/Qwen3-0.6B-IQ4_XS.gguf" --serve --max_context=262144
+JITBEAM=2 DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm --model "/Users/plagache/.cache/huggingface/hub/models--unsloth--Qwen3-0.6B-GGUF/snapshots/50968a4468ef4233ed78cd7c3de230dd1d61a56b/Qwen3-0.6B-IQ4_XS.gguf" --serve --max_context=256000
 ```
+Unfortunately these model do not have "coding Agent" mode, can't use them with `PI`
 
-```sh
-BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.6:35b-a3b" --serve
-```
+### Test protocol
 
-```sh
-DEBUG=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
-DEBUG=2 BEAM=2 DEV=AMD:HIP uv run python3 -m tinygrad.llm -m "qwen3.5:0.8b" --benchmark 32
-```
+--warmup with DEBUG=2
+--warmup --benchmark with DEBUG=2
+then we remove the DEBUG=2 and --serve with --max_context=256000
 
 ### Archives
 
